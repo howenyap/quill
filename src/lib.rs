@@ -1,6 +1,10 @@
-use axum::extract::Path;
+use axum::extract::{Form, Path};
 use axum::http::StatusCode;
-use axum::{Router, routing::get};
+use axum::{
+    Router,
+    routing::{get, post},
+};
+use serde::Deserialize;
 use tokio::net::TcpListener;
 
 pub struct Server {
@@ -38,9 +42,20 @@ async fn health_check() -> StatusCode {
     StatusCode::OK
 }
 
+#[derive(Debug, Deserialize)]
+struct SubscriptionForm {
+    name: String,
+    email: String,
+}
+
+async fn subscribe(Form(_payload): Form<SubscriptionForm>) -> StatusCode {
+    StatusCode::OK
+}
+
 pub fn server() -> Router {
     Router::new()
         .route("/", get(|| async { "Hello, World!" }))
         .route("/greet/{name}", get(greet))
         .route("/health_check", get(health_check))
+        .route("/subscriptions", post(subscribe))
 }
