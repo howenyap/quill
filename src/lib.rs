@@ -13,7 +13,7 @@ pub struct Server {
 }
 
 impl Server {
-    pub fn new() -> Self {
+    fn new() -> Self {
         Self::with_address("127.0.0.1:0".to_string())
     }
 
@@ -34,6 +34,12 @@ impl Server {
     }
 }
 
+impl Default for Server {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 async fn greet(Path(name): Path<String>) -> String {
     format!("Hello {}!", name)
 }
@@ -42,6 +48,7 @@ async fn health_check() -> StatusCode {
     StatusCode::OK
 }
 
+#[allow(dead_code)]
 #[derive(Debug, Deserialize)]
 struct SubscriptionForm {
     name: String,
